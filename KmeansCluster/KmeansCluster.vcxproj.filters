@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cluster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Kmeans.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -29,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cluster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Kmeans.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -50,5 +44,25 @@
     <Text Include="vehicle.txt" />
     <Text Include="wine.txt" />
     <Text Include="yeast.txt" />
+    <Text Include="Debug\ecoli.txt" />
+    <Text Include="Debug\glass.txt" />
+    <Text Include="Debug\ionosphere.txt" />
+    <Text Include="Debug\iris_bezdek.txt" />
+    <Text Include="Debug\KmeansCluster.log" />
+    <Text Include="Debug\landsat.txt" />
+    <Text Include="Debug\letter_recognition.txt" />
+    <Text Include="Debug\segmentation.txt" />
+    <Text Include="Debug\vehicle.txt" />
+    <Text Include="Debug\wine.txt" />
+    <Text Include="Debug\yeast.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Debug\Kmeans.obj" />
+    <Object Include="Debug\Main.obj" />
+    <Object Include="Debug\Point.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Debug\vc142.idb" />
+    <None Include="Debug\vc142.pdb" />
   </ItemGroup>
 </Project>

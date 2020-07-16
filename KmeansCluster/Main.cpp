@@ -6,15 +6,13 @@
 #include <vector>
 #include <sstream>
 #include "Point.h"
-#include "Cluster.h"
 #include "Kmeans.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
 	int K, I, R, N, D, bestRun;
-	double T;
-	int pointId = 1; // Initialize beginning of point IDs
+	double T = 0.001;
 	double SSE, minSSE;// Hold return SSE value from kmeans run
 	string F;		 // Input filename
 	string line;	 // Stores data from input file
@@ -35,7 +33,7 @@ int main(int argc, char** argv) {
 
 	// Open File for reading
 	F = argv[1];
-	fstream in_file(F, ios::in);
+	fstream in_file("C:/Users/rossm/source/repos/KmeansCluster/KmeansCluster/Data_Sets/" + F, ios::in);
 
 	// Test for open
 	if (!in_file) {
@@ -50,9 +48,8 @@ int main(int argc, char** argv) {
 
 	// Read from file and store points
 	while (getline(in_file, line)) {
-		Point point(pointId, line);
+		Point point(line);
 		all_points.push_back(point);
-		pointId++;
 	}
 	in_file.close();
 	
@@ -76,7 +73,7 @@ int main(int argc, char** argv) {
 	// Running K-Means clustering
 	for (int i = 0; i < R; i++) {
 		Kmeans kmeans(F,K,I,T,(i + 1),N,D);
-		SSE = kmeans.run(all_points);
+		SSE = kmeans.run(&all_points);
 		allSSEs.push_back(SSE);
 	}
 

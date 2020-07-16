@@ -9,21 +9,21 @@ using namespace std;
 class Point
 {
 private:
-	int pointId, clusterId;
+	int clusterId;
 	int dimensions;
-	double distance;
+	double minDist;
 	vector<double> values;
 
 public:
 	Point();
-	Point(int id, string line);
-	int getDimensions();
+	Point(string line);
 	int getCluster();
-	int getId();
 	double getValue(int pos);
-	double getDistance();
-	void setDistance(double distance);
+	double getMinDist();
+	void setMinDist(double distance);
 	void setCluster(int value);
+	void setValueByPos(int pos, double val);
+	double distance(Point pt);
 
 };
 

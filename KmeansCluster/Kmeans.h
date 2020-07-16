@@ -1,23 +1,21 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
-#include "Cluster.h"
+#include "Point.h"
 #include <string>
 
-class Kmeans : public Cluster
+class Kmeans : public Point
 {
 private:
 	int K, I, D, numRun, totPoints;
 	double threshold;
 	string filename;
-	vector<Cluster> clusters;
-
-	int getNearestClusterId(Point *pt);
+	vector<Point> centroids;
 
 public:
 	Kmeans();
 	Kmeans(string fn, int K, int iterations, double threshold, int numRun,  int N, int dimensions);
-	double run(vector <Point> & allPoints);
+	double run(vector <Point> * allPoints);
 
 };
 

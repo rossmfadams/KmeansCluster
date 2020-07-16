@@ -1,21 +1,20 @@
 #include "Point.h"
 #include <sstream>
+#include <cfloat>
 
 Point::Point()
 {
 	//Default Constructor
-	clusterId = 0;
+	clusterId = -1;
 	dimensions = 0;
-	pointId = 0;
-	distance = 0.0;
+	minDist = DBL_MAX;
 }
 
-Point::Point(int id, string line)
+Point::Point(string line)
 {
 	dimensions = 0;
-	clusterId = 0;
-	pointId = id;
-	distance = 0.0;
+	clusterId = -1;
+	minDist = DBL_MAX;
 	stringstream is(line);
 	double value;
 	while (is >> value) {
@@ -24,19 +23,10 @@ Point::Point(int id, string line)
 	}
 }
 
-int Point::getDimensions()
-{
-	return dimensions;
-}
 
 int Point::getCluster()
 {
 	return clusterId;
-}
-
-int Point::getId()
-{
-	return pointId;
 }
 
 double Point::getValue(int pos)
@@ -44,17 +34,34 @@ double Point::getValue(int pos)
 	return values[pos];
 }
 
-double Point::getDistance()
+double Point::getMinDist()
 {
-	return distance;
+	return minDist;
 }
 
-void Point::setDistance(double distance)
+void Point::setMinDist(double distance)
 {
-	this->distance = distance;
+	this->minDist = distance;
 }
-
+   
 void Point::setCluster(int value)
 {
 	clusterId = value;
+}
+
+void Point::setValueByPos(int pos, double val)
+{
+	values[pos] = val;
+}
+
+double Point::distance(Point pt)
+{
+	double sum = 0.0, delta = 0.0;
+
+	for (int i = 0; i < dimensions; i++) {
+		delta = pt.getValue(i) - this->getValue(i);
+		sum += delta * delta;
+	}
+
+	return sum;
 }

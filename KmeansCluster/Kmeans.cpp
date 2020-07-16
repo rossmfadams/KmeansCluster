@@ -3,35 +3,8 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <cfloat>
 #include <iomanip>
-
-int Kmeans::getNearestClusterId(Point *pt)
-{
-	double sum = 0.0;
-	int nearestClusterId;
-
-	for (int i = 0; i < D; i++) {
-		sum += (clusters[0].getCentroidByPos(i) - pt->getValue(i)) * (clusters[0].getCentroidByPos(i) - pt->getValue(i));
-	}
-
-	pt->setDistance(sum);
-	nearestClusterId = clusters[0].getId();
-
-	for (int i = 1; i < K; i++) {
-
-		sum = 0.0;
-
-		for (int j = 0; j < D; j++) {
-			sum += (clusters[i].getCentroidByPos(j) - pt->getValue(j)) * (clusters[i].getCentroidByPos(j) - pt->getValue(j));
-		}
-
-		if (sum < pt->getDistance()) {
-			pt->setDistance(sum);
-			nearestClusterId = clusters[i].getId();
-		}
-	}
-	return nearestClusterId;
-}
 
 Kmeans::Kmeans()
 {
@@ -58,30 +31,19 @@ Kmeans::Kmeans(string fn, int K, int iterations, double threshold, int numRun, i
 	
 }
 
-double Kmeans::run(vector<Point>& allPoints)
+double Kmeans::run(vector<Point>* allPoints)
 {
 
 	// Initializing Clusters
 	vector<int> usedPointIds;
 	srand(time(0));
 
-	for (int i = 1; i <= K; i++) {
-		bool unused = false;
-
-		do {
-			int index = rand() % totPoints;
-
-			if (find(usedPointIds.begin(), usedPointIds.end(), index) == usedPointIds.end()) {
-				unused = true;
-				usedPointIds.push_back(index);
-				allPoints[index].setCluster(i);
-				Cluster cluster(i, allPoints[index]);
-				clusters.push_back(cluster);
-			}
-		} while (!unused);
+	for (int i = 0; i < K; i++) {
+		int index = rand() % totPoints;
+		centroids.push_back(allPoints->at(index));
 	}
 	
-	cout << "clusters initialized = " << clusters.size() << endl << endl;
+	cout << "clusters initialized = " << centroids.size() << endl << endl;
 
 	cout << "Running K-Means Clustering... " << endl;
 
@@ -107,33 +69,28 @@ double Kmeans::run(vector<Point>& allPoints)
 		out_file << "Iteration " << currentIter << ": ";
 
 		// Add all points to their nearest cluster
-		for (int i = 0; i < totPoints; i++) {
-			int currentClusterId = allPoints[i].getCluster();
-			int nearestClusterId = getNearestClusterId(&allPoints[i]);
+		for (vector<Point>::iterator c = begin(centroids);
+			c != end(centroids); ++c) {
+			// Get cluster index
+			int clusterId = c - begin(centroids);
 
-			// Add point contribution to SSE
-			currentSSE += allPoints[i].getDistance();
-
-			if (currentClusterId != nearestClusterId) {
-				if (currentClusterId != 0) {
-					for (int j = 0; j < K; j++) {
-						if (clusters[j].getId() == currentClusterId) {
-							clusters[j].removePoint(allPoints[i].getId());
-						}
-					}
+			for (vector<Point>::iterator it = allPoints->begin();
+				it != allPoints->end(); ++it) {
+				Point p = *it;
+				double dist = c->distance(p);
+				if (dist < p.getMinDist()) {
+					p.setMinDist(dist);
+					p.setCluster(clusterId);
 				}
-
-				for (int j = 0; j < K; j++) {
-					if (clusters[j].getId() == nearestClusterId) {
-						clusters[j].addPoint(allPoints[i]);
-					}
-				}
-
-				allPoints[i].setCluster(nearestClusterId);
+				*it = p;
 			}
 		}
 
-		// Print total SSE
+		// Calculate and Print total SSE
+		for (int i = 0; i < totPoints; i++) {
+			currentSSE += allPoints->at(i).getMinDist();
+		}
+
 		cout << "SSE = " << std::setprecision(5) << currentSSE << endl;
 		out_file << "SSE = " << std::setprecision(5) << currentSSE << endl;
 		
@@ -148,19 +105,36 @@ double Kmeans::run(vector<Point>& allPoints)
 		currentSSE = 0.0;	  // Reset currentSSE
 
 		// Recalculate the centroid of each cluster
+
+		vector<int> nPoints(K,0); // Holds # of points per cluster. Initialize with zeroes
+		
+		// Reset centroid values to zero
 		for (int i = 0; i < K; i++) {
-			int clusterSize = clusters[i].getSize();
 			for (int j = 0; j < D; j++) {
-				double sum = 0.0;
-				if (clusterSize > 0) {
-					for (int p = 0; p < clusterSize; p++) {
-						sum += clusters[i].getPoint(p).getValue(j);
-					}
-					clusters[i].setCentroidByPos(j, sum / clusterSize);
-				}
-			 }
+				centroids[i].setValueByPos(j, 0.0);
+			}
 		}
 
+		// Sum up values for each coordinate and save in centroids vector
+		for (int i = 0; i < totPoints; i++) {
+			int clusterId = allPoints->at(i).getCluster();
+			nPoints[clusterId] += 1;
+			for (int j = 0; j < D; j++) {
+				double sum = centroids[clusterId].getValue(j) + allPoints->at(i).getValue(j);
+				centroids[clusterId].setValueByPos(j, sum);
+			}
+
+			allPoints->at(i).setMinDist(DBL_MAX); // reset distance
+		}
+
+		// Divide values of centroid coordinates by # of points in cluster to obtain mean
+		for (int i = 0; i < K; i++) {
+			for (int j = 0; j < D; j++) {
+				double mean = centroids[i].getValue(j) / nPoints[i];
+				centroids[i].setValueByPos(j, mean);
+			}
+		}
+		
 		currentIter++;
 	} while (currentIter <= I && !belowThreshold);
 
