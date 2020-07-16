@@ -6,8 +6,8 @@ Point::Point()
 {
 	//Default Constructor
 	clusterId = -1;
-	dimensions = 0;
 	minDist = DBL_MAX;
+	dimensions = 0;
 }
 
 Point::Point(string line)
@@ -22,7 +22,6 @@ Point::Point(string line)
 		dimensions++;
 	}
 }
-
 
 int Point::getCluster()
 {
@@ -54,10 +53,9 @@ void Point::setValueByPos(int pos, double val)
 	values[pos] = val;
 }
 
-double Point::distance(Point pt)
+double Point::distance(Point & pt)
 {
 	double sum = 0.0, delta = 0.0;
-
 	for (int i = 0; i < dimensions; i++) {
 		delta = pt.getValue(i) - this->getValue(i);
 		sum += delta * delta;

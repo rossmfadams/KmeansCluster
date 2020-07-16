@@ -40,7 +40,7 @@ double Kmeans::run(vector<Point>* allPoints)
 
 	for (int i = 0; i < K; i++) {
 		int index = rand() % totPoints;
-		centroids.push_back(allPoints->at(index));
+		centroids.push_back((*allPoints)[index]);
 	}
 	
 	cout << "clusters initialized = " << centroids.size() << endl << endl;
@@ -76,19 +76,18 @@ double Kmeans::run(vector<Point>* allPoints)
 
 			for (vector<Point>::iterator it = allPoints->begin();
 				it != allPoints->end(); ++it) {
-				Point p = *it;
+				Point &p = *it;
 				double dist = c->distance(p);
 				if (dist < p.getMinDist()) {
 					p.setMinDist(dist);
 					p.setCluster(clusterId);
 				}
-				*it = p;
 			}
 		}
 
 		// Calculate and Print total SSE
 		for (int i = 0; i < totPoints; i++) {
-			currentSSE += allPoints->at(i).getMinDist();
+			currentSSE += (*allPoints)[i].getMinDist();
 		}
 
 		cout << "SSE = " << std::setprecision(5) << currentSSE << endl;
@@ -117,14 +116,14 @@ double Kmeans::run(vector<Point>* allPoints)
 
 		// Sum up values for each coordinate and save in centroids vector
 		for (int i = 0; i < totPoints; i++) {
-			int clusterId = allPoints->at(i).getCluster();
+			int clusterId = (*allPoints)[i].getCluster();
 			nPoints[clusterId] += 1;
 			for (int j = 0; j < D; j++) {
-				double sum = centroids[clusterId].getValue(j) + allPoints->at(i).getValue(j);
+				double sum = centroids[clusterId].getValue(j) + (*allPoints)[i].getValue(j);
 				centroids[clusterId].setValueByPos(j, sum);
 			}
 
-			allPoints->at(i).setMinDist(DBL_MAX); // reset distance
+			(*allPoints)[i].setMinDist(DBL_MAX); // reset distance
 		}
 
 		// Divide values of centroid coordinates by # of points in cluster to obtain mean

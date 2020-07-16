@@ -23,7 +23,7 @@ public:
 	void setMinDist(double distance);
 	void setCluster(int value);
 	void setValueByPos(int pos, double val);
-	double distance(Point pt);
+	double distance(Point & pt);
 
 };
 
