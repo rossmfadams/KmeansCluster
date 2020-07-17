@@ -123,9 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Kmeans.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Point.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Kmeans.h" />
@@ -136,7 +134,6 @@
     <Text Include="Debug\glass.txt" />
     <Text Include="Debug\ionosphere.txt" />
     <Text Include="Debug\iris_bezdek.txt" />
-    <Text Include="Debug\KmeansCluster.log" />
     <Text Include="Debug\landsat.txt" />
     <Text Include="Debug\letter_recognition.txt" />
     <Text Include="Debug\segmentation.txt" />
@@ -153,15 +150,6 @@
     <Text Include="vehicle.txt" />
     <Text Include="wine.txt" />
     <Text Include="yeast.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Debug\Kmeans.obj" />
-    <Object Include="Debug\Main.obj" />
-    <Object Include="Debug\Point.obj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Debug\vc142.idb" />
-    <None Include="Debug\vc142.pdb" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kmeans.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,21 +42,11 @@
     <Text Include="Debug\glass.txt" />
     <Text Include="Debug\ionosphere.txt" />
     <Text Include="Debug\iris_bezdek.txt" />
-    <Text Include="Debug\KmeansCluster.log" />
     <Text Include="Debug\landsat.txt" />
     <Text Include="Debug\letter_recognition.txt" />
     <Text Include="Debug\segmentation.txt" />
     <Text Include="Debug\vehicle.txt" />
     <Text Include="Debug\wine.txt" />
     <Text Include="Debug\yeast.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Debug\Kmeans.obj" />
-    <Object Include="Debug\Main.obj" />
-    <Object Include="Debug\Point.obj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Debug\vc142.idb" />
-    <None Include="Debug\vc142.pdb" />
   </ItemGroup>
 </Project>
