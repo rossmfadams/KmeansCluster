@@ -12,7 +12,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
 	int K, I, R, N, D, bestRun;
-	double T = 0.001;
+	double T;
 	double SSE, minSSE;// Hold return SSE value from kmeans run
 	string F;		 // Input filename
 	string line;	 // Stores data from input file
@@ -87,8 +87,8 @@ int main(int argc, char** argv) {
 		cout << "Error: Cannot open " << F << " for writing" << endl;
 		return 1;
 	}
-	cout << setprecision(5) << "\nBest Run: " << bestRun << " SSE: " << minSSE << endl;
-	out_file << setprecision(5) << "\nBest Run: " << bestRun << " SSE: " << minSSE << endl;
+	cout << setprecision(7) << "\nBest Run: " << bestRun << " SSE: " << minSSE << endl;
+	out_file << setprecision(7) << "\nBest Run: " << bestRun << " SSE: " << minSSE << endl;
 	out_file.close();
 
 	return 0;

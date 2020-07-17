@@ -69,29 +69,27 @@ double Kmeans::run(vector<Point>* allPoints)
 		out_file << "Iteration " << currentIter << ": ";
 
 		// Add all points to their nearest cluster
-		for (vector<Point>::iterator c = begin(centroids);
-			c != end(centroids); ++c) {
-			// Get cluster index
-			int clusterId = c - begin(centroids);
+		for (vector<Point>::iterator it = allPoints->begin();
+			it != allPoints->end(); ++it) {
+			Point& p = *it;
 
-			for (vector<Point>::iterator it = allPoints->begin();
-				it != allPoints->end(); ++it) {
-				Point &p = *it;
+			for (vector<Point>::iterator c = begin(centroids);
+				c != end(centroids); ++c) {
+				int clusterId = c - begin(centroids);
 				double dist = c->distance(p);
 				if (dist < p.getMinDist()) {
 					p.setMinDist(dist);
 					p.setCluster(clusterId);
 				}
 			}
+
+			// Add min distance to SSE
+			currentSSE += it->getMinDist();
 		}
 
-		// Calculate and Print total SSE
-		for (int i = 0; i < totPoints; i++) {
-			currentSSE += (*allPoints)[i].getMinDist();
-		}
-
-		cout << "SSE = " << std::setprecision(5) << currentSSE << endl;
-		out_file << "SSE = " << std::setprecision(5) << currentSSE << endl;
+		// Print total SSE
+		cout << "SSE = " << std::setprecision(7) << currentSSE << endl;
+		out_file << "SSE = " << std::setprecision(7) << currentSSE << endl;
 		
 		// Check for threshold
 		if (prevSSE > 0.0) {

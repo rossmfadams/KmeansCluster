@@ -10,7 +10,6 @@ class Point
 {
 private:
 	int clusterId;
-	int dimensions;
 	double minDist;
 	vector<double> values;
 
