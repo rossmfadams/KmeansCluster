@@ -45,11 +45,22 @@ public:
 
 	}
 
+	void findClosestCentroidToCentroid(vector<Point>* centroids) {
+		for (int i = 0; i < K; i++) {
+			for (int j = i + 1; j < K; j++) {
+				double dist = centroids->at(i).distance(centroids->at(j));
+				if (centroids->at(i).getMinDist() > dist) {
+					centroids->at(i).setMinDist(dist);
+					centroids->at(i).setCluster(j);
+				}
+			}
+		}
+	}
+
 	double run(vector<Point>* allPoints)
 	{
 
 		// Initializing Clusters
-		vector<int> usedPointIds;
 		srand(time(0));
 
 		for (int i = 0; i < K; i++) {
@@ -82,6 +93,8 @@ public:
 			cout << "Iteration " << currentIter << ": ";
 			out_file << "Iteration " << currentIter << ": ";
 
+			findClosestCentroidToCentroid(&centroids);
+
 			// Add all points to their nearest cluster
 			for (vector<Point>::iterator it = allPoints->begin();
 				it != allPoints->end(); ++it) {
@@ -92,8 +105,12 @@ public:
 					int clusterId = c - begin(centroids);
 					double dist = c->distance(p);
 					if (dist < p.getMinDist()) {
+						p.setSecMinDist(p.getMinDist());
 						p.setMinDist(dist);
 						p.setCluster(clusterId);
+					}
+					else if (p.getSecMinDist() > dist) {
+						p.setSecMinDist(dist);
 					}
 				}
 

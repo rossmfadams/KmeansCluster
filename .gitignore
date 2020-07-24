@@ -338,3 +338,13 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/yeastOutput.txt
+/wineOutput.txt
+/vehicleOutput.txt
+/segmentationOutput.txt
+/letter_recognitionOutput.txt
+/landsatOutput.txt
+/iris_bezdekOutput.txt
+/ionosphereOutput.txt
+/glassOutput.txt
+/ecoliOutput.txt

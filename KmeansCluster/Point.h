@@ -11,9 +11,9 @@ using namespace std;
 class Point
 {
 private:
-	int clusterId;
-	double minDist;
 	vector<double> values;
+	int clusterId;
+	double minDist, secMinDist;
 
 public:
 	Point()
@@ -21,12 +21,14 @@ public:
 		//Default Constructor
 		clusterId = -1;
 		minDist = DBL_MAX;
+		secMinDist = DBL_MAX;
 	}
 
 	Point(string line)
 	{
 		clusterId = -1;
 		minDist = DBL_MAX;
+		secMinDist = DBL_MAX;
 		stringstream is(line);
 		double value;
 		while (is >> value) {
@@ -52,6 +54,16 @@ public:
 	void setMinDist(double distance)
 	{
 		this->minDist = distance;
+	}
+
+	double getSecMinDist()
+	{
+		return secMinDist;
+	}
+
+	void setSecMinDist(double distance)
+	{
+		this->secMinDist = distance;
 	}
 
 	void setCluster(int value)
