@@ -76,6 +76,7 @@ void zScoreNormalize(vector<Point>* allPoints, int totPoints, int dimensions) {
 		}
 	}
 }
+
 /* Driver. Takes in command-line arguments in the following order:
    [dataFilename] [K] [maxIterations] [threshold] [maxRuns]
    [initializationMethod] [normalizationMethod] 
