@@ -20,6 +20,7 @@ private:
 	vector<Point> centroids;
 
 public:
+	/* Default Constructor */
 	Kmeans()
 	{
 		// Default Constructor
@@ -33,6 +34,7 @@ public:
 
 	}
 
+	/* Constructor */
 	Kmeans(string fn, int K, int iterations, double threshold, int numRun, int N, int dimensions)
 	{
 		this->filename = fn;
@@ -45,28 +47,129 @@ public:
 
 	}
 
-	void findClosestCentroidToCentroid(vector<Point>* centroids) {
+	/* Calculates the centeroid of a cluster based on the mean of all coordinate values 
+	   of points within the cluster */
+	void calculateCentroids(vector<Point>* allPoints) {
+		vector<int> nPoints(K, 0);
+		vector<Point> resetCentroids;
+		
+		// Create point vector of empty points
 		for (int i = 0; i < K; i++) {
-			for (int j = i + 1; j < K; j++) {
-				double dist = centroids->at(i).distance(centroids->at(j));
-				if (centroids->at(i).getMinDist() > dist) {
-					centroids->at(i).setMinDist(dist);
-					centroids->at(i).setCluster(j);
-				}
+			Point pt(D);
+			resetCentroids.push_back(pt);
+		}
+		
+		// Swap empty point vector with centroid vector to reset values
+		centroids.swap(resetCentroids);
+
+		// Sum up values for each coordinate and save in centroids vector
+		for (int i = 0; i < totPoints; i++) {
+			int clusterId = (*allPoints)[i].getCluster();
+			nPoints[clusterId] += 1;
+			for (int j = 0; j < D; j++) {
+				double sum = centroids[clusterId].getValue(j) + (*allPoints)[i].getValue(j);
+				centroids[clusterId].setValueByPos(j, sum);
+			}
+
+			(*allPoints)[i].setMinDist(DBL_MAX); // reset distance
+		}
+
+		// Divide values of centroid coordinates by # of points in cluster to obtain mean
+		for (int i = 0; i < K; i++) {
+			for (int j = 0; j < D; j++) {
+				double mean = centroids[i].getValue(j) / nPoints[i];
+				centroids[i].setValueByPos(j, mean);
 			}
 		}
 	}
 
-	double run(vector<Point>* allPoints)
-	{
-
-		// Initializing Clusters
+	/* Randomly selects K points as the initial clusters */
+	void randSelection(vector<Point>* allPoints) {
 		srand(time(0));
 
 		for (int i = 0; i < K; i++) {
 			int index = rand() % totPoints;
 			centroids.push_back((*allPoints)[index]);
 		}
+
+	}
+
+	/* Assigns each point to a cluster selected uniformly at random */
+	void randPartition(vector<Point>* allPoints) {
+		srand(time(0));
+
+		for (int i = 0; i < totPoints; i++) {
+			int assignment = rand() % K;
+			(*allPoints)[i].setCluster(assignment);
+		}
+
+		/// Calculate centroids of randomly partitioned clusters
+		calculateCentroids(allPoints);
+	}
+
+	/* Arbitrarily sets the first centroid as the mean of all coordinates of all
+	   points in the data set. Then incrementally selects the point furthest from
+	   all previously selected centroids to be the next centroid until K centroids
+	   are selected */
+	void maximin(vector<Point>* allPoints) {
+		vector<double> meanValues(D, 0.0);
+		Point pt(D);
+		int max_dist_index = 0;
+		double dist, max_dist;
+
+		// Initialize first centroid as average of all point values
+		for (int i = 0; i < totPoints; i++) {
+			for (int j = 0; j < D; j++) {
+				meanValues[j] += (*allPoints)[i].getValue(j) / totPoints;
+			}
+		}
+		
+		for (int i = 0; i < D; i++) {
+			pt.setValueByPos(i, meanValues[i]);
+		}
+
+		centroids.push_back(pt);
+
+		// Choose the remaining centers using maximin
+		for (int i = 1; i < K; i++) {
+			max_dist = DBL_MIN;
+			for (int j = 0; j < totPoints; j++) {
+				// Compute points distance to previously chosen centroid
+				dist = centroids[i - 1].distance((*allPoints)[j]);
+
+				if (dist < (*allPoints)[j].getMinDist()) {
+					// Update nearest-centroid-distance for this point
+					(*allPoints)[j].setMinDist(dist);
+				}
+				if (max_dist < (*allPoints)[j].getMinDist()) {
+					// Update the maximum nearest-centroid-distance so far
+					max_dist = (*allPoints)[j].getMinDist();
+					max_dist_index = j;
+				}
+			}
+
+			// Point with maximum distance to its nearest center is chosen as a centroid
+			centroids.push_back((*allPoints)[max_dist_index]);
+		}
+
+	}
+
+	/* The batch (Lloyd's) K-mean algorithm 
+	   returns the Sum of Squared Error */
+	double run(vector<Point>* allPoints, string initType = "randSelection")
+	{
+
+		// Initializing Clusters
+		if (initType == "randSelection") {
+			randSelection(allPoints);
+		}
+		else if (initType == "randPartition") {
+			randPartition(allPoints);
+		}
+		else if (initType == "maximin") {
+			maximin(allPoints);
+		}
+
 
 		cout << "clusters initialized = " << centroids.size() << endl << endl;
 
@@ -93,8 +196,6 @@ public:
 			cout << "Iteration " << currentIter << ": ";
 			out_file << "Iteration " << currentIter << ": ";
 
-			findClosestCentroidToCentroid(&centroids);
-
 			// Add all points to their nearest cluster
 			for (vector<Point>::iterator it = allPoints->begin();
 				it != allPoints->end(); ++it) {
@@ -104,13 +205,9 @@ public:
 					c != end(centroids); ++c) {
 					int clusterId = c - begin(centroids);
 					double dist = c->distance(p);
-					if (dist < p.getMinDist()) {
-						p.setSecMinDist(p.getMinDist());
+					if (dist <= p.getMinDist()) {
 						p.setMinDist(dist);
 						p.setCluster(clusterId);
-					}
-					else if (p.getSecMinDist() > dist) {
-						p.setSecMinDist(dist);
 					}
 				}
 
@@ -123,45 +220,15 @@ public:
 			out_file << "SSE = " << std::setprecision(7) << currentSSE << endl;
 
 			// Check for threshold
-			
 			if ((abs(currentSSE - prevSSE) / prevSSE) < threshold) {
 				belowThreshold = true;
 			}
 			
-
 			prevSSE = currentSSE; // Save SSE for next iteration
 			currentSSE = 0.0;	  // Reset currentSSE
 
 			// Recalculate the centroid of each cluster
-
-			vector<int> nPoints(K, 0); // Holds # of points per cluster. Initialize with zeroes
-
-			// Reset centroid values to zero
-			for (int i = 0; i < K; i++) {
-				for (int j = 0; j < D; j++) {
-					centroids[i].setValueByPos(j, 0.0);
-				}
-			}
-
-			// Sum up values for each coordinate and save in centroids vector
-			for (int i = 0; i < totPoints; i++) {
-				int clusterId = (*allPoints)[i].getCluster();
-				nPoints[clusterId] += 1;
-				for (int j = 0; j < D; j++) {
-					double sum = centroids[clusterId].getValue(j) + (*allPoints)[i].getValue(j);
-					centroids[clusterId].setValueByPos(j, sum);
-				}
-
-				(*allPoints)[i].setMinDist(DBL_MAX); // reset distance
-			}
-
-			// Divide values of centroid coordinates by # of points in cluster to obtain mean
-			for (int i = 0; i < K; i++) {
-				for (int j = 0; j < D; j++) {
-					double mean = centroids[i].getValue(j) / nPoints[i];
-					centroids[i].setValueByPos(j, mean);
-				}
-			}
+			calculateCentroids(allPoints);
 
 			currentIter++;
 		} while (currentIter <= I && !belowThreshold);

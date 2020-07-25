@@ -12,27 +12,40 @@ class Point
 {
 private:
 	vector<double> values;
-	int clusterId;
-	double minDist, secMinDist;
+	int clusterId, dimensions;
+	double minDist;
 
 public:
-	Point()
-	{
-		//Default Constructor
+	/* Default Constructor*/
+	Point() {
+		dimensions = 0;
 		clusterId = -1;
 		minDist = DBL_MAX;
-		secMinDist = DBL_MAX;
 	}
 
+	/* Constructor for empty point*/
+	Point(int dimensions)
+	{
+		//Default Constructor
+		this->dimensions = dimensions;
+		clusterId = -1;
+		minDist = DBL_MAX;
+		for (int i = 0; i < this->dimensions; i++) {
+			values.push_back(0.0);
+		}
+	}
+
+	/* Constructor when reading from file */
 	Point(string line)
 	{
 		clusterId = -1;
 		minDist = DBL_MAX;
-		secMinDist = DBL_MAX;
+		dimensions = 0;
 		stringstream is(line);
 		double value;
 		while (is >> value) {
 			values.push_back(value);
+			dimensions++;
 		}
 	}
 
@@ -56,16 +69,6 @@ public:
 		this->minDist = distance;
 	}
 
-	double getSecMinDist()
-	{
-		return secMinDist;
-	}
-
-	void setSecMinDist(double distance)
-	{
-		this->secMinDist = distance;
-	}
-
 	void setCluster(int value)
 	{
 		clusterId = value;
@@ -76,6 +79,7 @@ public:
 		values[pos] = val;
 	}
 
+	/* Square Euclidean distance */
 	double distance(Point& pt)
 	{
 		double sum = 0.0, delta = 0.0;

@@ -348,3 +348,14 @@ healthchecksdb
 /ionosphereOutput.txt
 /glassOutput.txt
 /ecoliOutput.txt
+/Output_noNorm_randSelection/yeastOutput.txt
+/Output_noNorm_randSelection/wineOutput.txt
+/Output_noNorm_randSelection/vehicleOutput.txt
+/Output_noNorm_randSelection/segmentationOutput.txt
+/Output_noNorm_randSelection/letter_recognitionOutput.txt
+/Output_noNorm_randSelection/landsatOutput.txt
+/Output_noNorm_randSelection/iris_bezdekOutput.txt
+/Output_noNorm_randSelection/ionosphereOutput.txt
+/Output_noNorm_randSelection/glassOutput.txt
+/Output_noNorm_randSelection/ecoliOutput.txt
+/KmeansCluster/ecoliOutput.txt
