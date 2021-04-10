@@ -13,7 +13,7 @@ class Point
 private:
 	vector<double> values;
 	int clusterId, dimensions;
-	double minDist;
+	double minDist, silhouette;
 
 public:
 	/* Default Constructor*/
@@ -21,6 +21,7 @@ public:
 		dimensions = 0;
 		clusterId = -1;
 		minDist = DBL_MAX;
+		silhouette = 0.0;
 	}
 
 	/* Constructor for empty point*/
@@ -30,6 +31,7 @@ public:
 		this->dimensions = dimensions;
 		clusterId = -1;
 		minDist = DBL_MAX;
+		silhouette = 0.0;
 		for (int i = 0; i < this->dimensions; i++) {
 			values.push_back(0.0);
 		}
@@ -40,6 +42,7 @@ public:
 	{
 		clusterId = -1;
 		minDist = DBL_MAX;
+		silhouette = 0.0;
 		dimensions = 0;
 		stringstream is(line);
 		double value;
@@ -62,6 +65,16 @@ public:
 	double getMinDist()
 	{
 		return minDist;
+	}
+
+	double getSilhouette() 
+	{
+		return silhouette;
+	}
+
+	void setSilhouette(double silhouette)
+	{
+		this->silhouette = silhouette;
 	}
 
 	void setMinDist(double distance)

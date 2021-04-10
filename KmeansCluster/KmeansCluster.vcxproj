@@ -126,6 +126,7 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InternalValidation.h" />
     <ClInclude Include="Kmeans.h" />
     <ClInclude Include="Point.h" />
   </ItemGroup>

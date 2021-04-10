@@ -31,6 +31,10 @@ void minMaxNormalize(vector<Point>* allPoints, int totPoints, int dimensions) {
 		min = *result.first;
 		max = *result.second;
 
+		if (max - min == 0) {
+			max = 1;
+			min = 0;
+		}
 		// Normalize values to be between 0 and 1 using the formula:
 		// v' = (v - min) / (max - min)
 		for (int f = 0; f < totPoints; f++) {
@@ -69,6 +73,9 @@ void zScoreNormalize(vector<Point>* allPoints, int totPoints, int dimensions) {
 		// Find standard deviation
 		stdev = sqrt(variance);
 
+		if (stdev == 0) {
+			stdev = 1;
+		}
 		// Normalize values using the formula: v' = (v - mean) / stdev
 		for (int j = 0; j < totPoints; j++) {
 			normalized = ((*allPoints)[j].getValue(i) - mean) / stdev;
